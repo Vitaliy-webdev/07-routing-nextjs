@@ -6,7 +6,7 @@ import { fetchNoteById } from "@/lib/api";
 import type { Note } from "@/types/note";
 import css from "./NotePreview.module.css";
 
-export default function NotePreview({ id }: { id: string }) {
+export default function NotePreviewClient({ id }: { id: string }) {
   const router = useRouter();
   const [note, setNote] = useState<Note | null>(null);
   const [isLoading, setIsLoading] = useState(true);
