@@ -1,13 +1,13 @@
 import { Suspense } from "react";
 import SidebarNotes from "./SidebarNotes";
 
-export default function ProductsLayout({
+function ProductsLayout({
   children,
   sidebar,
-}: Readonly<{
+}: {
   children: React.ReactNode;
   sidebar: React.ReactNode;
-}>) {
+}) {
   return (
     <>
       <Suspense fallback={<div>Loading notes...</div>}>
@@ -18,3 +18,10 @@ export default function ProductsLayout({
     </>
   );
 }
+
+const layout = {
+  Component: ProductsLayout,
+  sidebar: <SidebarNotes />,
+};
+
+export default layout;
