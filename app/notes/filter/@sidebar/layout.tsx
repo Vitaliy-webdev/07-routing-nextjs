@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import SidebarNotes from "./SidebarNotes";
 
-function ProductsLayout({
+export default function ProductsLayout({
   children,
   sidebar,
 }: {
@@ -18,10 +18,3 @@ function ProductsLayout({
     </>
   );
 }
-
-const layout = {
-  Component: ProductsLayout,
-  sidebar: <SidebarNotes />,
-};
-
-export default layout;
