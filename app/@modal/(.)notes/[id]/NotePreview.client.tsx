@@ -1,43 +1,65 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
+import { useRouter } from "next/navigation";
 import type { Note } from "@/types/note";
+import Modal from "@/components/Modal/Modal";
 import css from "./NotePreview.module.css";
 
-export default function NotePreviewClient({ id }: { id: string }) {
+interface NotePreviewClientProps {
+  id: string;
+  onClose?: () => void;
+}
+
+export default function NotePreviewClient({
+  id,
+  onClose,
+}: NotePreviewClientProps) {
   const router = useRouter();
-  const [note, setNote] = useState<Note | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchNoteById(id)
-      .then(setNote)
-      .catch((err) => setError(err.message))
-      .finally(() => setIsLoading(false));
-  }, [id]);
+  const {
+    data: note,
+    isLoading,
+    isError,
+  } = useQuery<Note, Error>({
+    queryKey: ["note", id],
+    queryFn: () => fetchNoteById(id),
+  });
 
-  if (isLoading) return <div className={css.container}>Loading...</div>;
-  if (error) return <div className={css.container}>Error: {error}</div>;
-  if (!note) return <div className={css.container}>Note not found</div>;
+  const handleClose = onClose ?? (() => router.back());
+
+  if (isLoading)
+    return (
+      <Modal onClose={handleClose}>
+        <div>Loading...</div>
+      </Modal>
+    );
+
+  if (isError || !note)
+    return (
+      <Modal onClose={handleClose}>
+        <div>Error loading note</div>
+      </Modal>
+    );
 
   return (
-    <div className={css.container}>
-      <div className={css.item}>
-        <div className={css.header}>
-          <h2>{note.title}</h2>
-          <span className={css.tag}>{note.tag}</span>
+    <Modal onClose={handleClose}>
+      <div className={css.container}>
+        <div className={css.item}>
+          <div className={css.header}>
+            <h2>{note.title}</h2>
+            <span className={css.tag}>{note.tag}</span>
+          </div>
+          <p className={css.content}>{note.content}</p>
+          <p className={css.date}>
+            {new Date(note.createdAt).toLocaleDateString()}
+          </p>
+          <button className={css.backBtn} onClick={handleClose}>
+            ← Close
+          </button>
         </div>
-        <p className={css.content}>{note.content}</p>
-        <p className={css.date}>
-          {new Date(note.createdAt).toLocaleDateString()}
-        </p>
-        <button className={css.backBtn} onClick={() => router.back()}>
-          ← Back
-        </button>
       </div>
-    </div>
+    </Modal>
   );
 }
