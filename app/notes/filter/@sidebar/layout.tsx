@@ -1,22 +1,17 @@
 import { Suspense } from "react";
 import SidebarNotes from "./SidebarNotes";
 
-export default function ProductsLayout({
+export default function FilterLayout({
   children,
-  modal,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
 }) {
   return (
-    <>
+    <div style={{ display: "flex" }}>
       <Suspense fallback={<div>Loading notes...</div>}>
         <SidebarNotes />
       </Suspense>
-      <div>
-        {children}
-        {modal}
-      </div>
-    </>
+      <main>{children}</main>
+    </div>
   );
 }
