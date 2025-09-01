@@ -25,6 +25,7 @@ export default function NotePreviewClient({
   } = useQuery<Note, Error>({
     queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
+    refetchOnMount: false,
   });
 
   const handleClose = onClose ?? (() => router.back());
